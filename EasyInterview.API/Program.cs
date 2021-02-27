@@ -18,9 +18,14 @@ namespace EasyInterview.API
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                //.ConfigureLogging(logging => 
+                //{
+                //    logging.ClearProviders();
+                //    logging.AddConsole();
+                //})
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>().UseUrls("http://192.168.0.14:5002", "https://192.168.0.14:5001");
                 });
     }
 }
