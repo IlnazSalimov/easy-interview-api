@@ -10,21 +10,30 @@ namespace EasyInterview.API.SignalR
 {
     public class SignalRtcHub : Hub
     {
-        public async Task NewUser(string username)
+        public async Task NewUser(UserModel newUser)
         {
-            var userInfo = new UserInfo() { userName = username, connectionId = Context.ConnectionId };
+            var userInfo = new UserInfo() {
+                Name = newUser.Name,
+                Picture = newUser.Picture,
+                ConnectionId = Context.ConnectionId 
+            };
             await Clients.Others.SendAsync("NewUserArrived", JsonSerializer.Serialize(userInfo));
         }
 
-        public async Task HelloUser(string userName, string user)
+        public async Task HelloUser(UserModel user, string recipientConnectionId)
         {
-            var userInfo = new UserInfo() { userName = userName, connectionId = Context.ConnectionId };
-            await Clients.Client(user).SendAsync("UserSaidHello", JsonSerializer.Serialize(userInfo));
+            var userInfo = new UserInfo()
+            {
+                Name = user.Name,
+                Picture = user.Picture,
+                ConnectionId = Context.ConnectionId
+            };
+            await Clients.Client(recipientConnectionId).SendAsync("UserSaidHello", JsonSerializer.Serialize(userInfo));
         }
 
-        public async Task SendSignal(string signal, string user)
+        public async Task SendSignal(string signal, string connectionId)
         {
-            await Clients.Client(user).SendAsync("SendSignal", Context.ConnectionId, signal);
+            await Clients.Client(connectionId).SendAsync("SendSignal", Context.ConnectionId, signal);
         }
 
         public override async Task OnDisconnectedAsync(System.Exception exception)

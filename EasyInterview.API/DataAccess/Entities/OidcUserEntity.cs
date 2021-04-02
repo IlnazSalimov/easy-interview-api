@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EasyInterview.API.DataAccess.Entities
 {
-    [Table("users")]
+    //[Table("users")]
     public class OidcUserEntity : IEntity
     {
         public int Id { get; set; }

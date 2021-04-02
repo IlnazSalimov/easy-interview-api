@@ -4,6 +4,7 @@ using EasyInterview.API.Controllers.Models;
 using EasyInterview.API.DataAccess.Entities;
 using EasyInterview.API.DataAccess.Repositories.Interview;
 using EasyInterview.API.DataAccess.Repositories.User;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,35 +14,32 @@ namespace EasyInterview.API.BusinessLogic.Services.Interview
 {
     public class InterviewService : IInterviewService
     {
-        public IInterviewRepository InterviewRepository { get; set; }
-        public IUserRepository UserRepository { get; set; }
-        public IMapper Mapper { get; set; }
+        private readonly IInterviewRepository interviewRepository;
+        private readonly UserManager<AppUser> userManager;
+        private readonly IMapper mapper;
 
         public InterviewService(
-            IInterviewRepository interviewRepository, 
-            IUserRepository userRepository, 
-            IMapper mapper)
+            IInterviewRepository interviewRepository,
+            IMapper mapper, UserManager<AppUser> userManager)
         {
-            InterviewRepository = interviewRepository;
-            UserRepository = userRepository;
-            Mapper = mapper;
+            this.interviewRepository = interviewRepository;
+            this.mapper = mapper;
+            this.userManager = userManager;
         }
 
-        public async Task<int> Create(CreateInteviewModel model)
+        public async Task<int> Create(CreateInteviewModel model, AppUser owner)
         {
-            var owner = UserRepository.GetAll().First(u => u.Email == model.OwnerEmail);
-
-            var interview = Mapper.Map<InterviewEntity>(model);
+            var interview = mapper.Map<InterviewEntity>(model);
             interview.CreatedDate = DateTime.Now;
             interview.Owner = owner;
 
-            return await InterviewRepository.Save(interview);
+            return await interviewRepository.Save(interview);
         }
 
         public async Task<InterviewModel> Get(int id)
         {
-            var interview = await InterviewRepository.Get(id);
-            return Mapper.Map<InterviewModel>(interview);
+            var interview = await interviewRepository.Get(id);
+            return mapper.Map<InterviewModel>(interview);
         }
     }
 }

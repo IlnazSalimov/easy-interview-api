@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using EasyInterview.API.Controllers.Models;
 
 namespace EasyInterview.API.DataAccess.Entities
 {
@@ -10,8 +11,7 @@ namespace EasyInterview.API.DataAccess.Entities
     public class InterviewEntity : IEntity
     {
         public int Id { get; set; }
-        public int OwnerId { get; set; }
-        public OidcUserEntity Owner { get; set; }
+        public AppUser Owner { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime BookedDate { get; set; }
     }

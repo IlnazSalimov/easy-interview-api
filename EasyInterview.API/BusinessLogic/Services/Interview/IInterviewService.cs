@@ -9,7 +9,7 @@ namespace EasyInterview.API.BusinessLogic.Services.Interview
 {
     public interface IInterviewService
     {
-        Task<int> Create(CreateInteviewModel model);
+        Task<int> Create(CreateInteviewModel model, AppUser owner);
         Task<InterviewModel> Get(int id);
     }
 }

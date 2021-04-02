@@ -3,6 +3,7 @@ using EasyInterview.API.BusinessLogic.Services.Interview;
 using EasyInterview.API.Controllers.Models;
 using EasyInterview.API.DataAccess.Repositories.Interview;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -16,11 +17,13 @@ namespace EasyInterview.API.Controllers
     [ApiController]
     public class InterviewController : ControllerBase
     {
+        protected readonly UserManager<AppUser> UserManager;
         public IInterviewService InterviewService { get; set; }
 
-        public InterviewController(IInterviewService interviewService)
+        public InterviewController(IInterviewService interviewService, UserManager<AppUser> userManager)
         {
             InterviewService = interviewService;
+            UserManager = userManager;
         }
 
         [HttpGet("{id}", Name = nameof(GetInterview))]
@@ -37,10 +40,11 @@ namespace EasyInterview.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm]CreateInteviewModel model)
+        public async Task<IActionResult> Create([FromBody]CreateInteviewModel model)
         {
-            var id = await InterviewService.Create(model);
-            return CreatedAtRoute(nameof(GetInterview), new { id });
+            var user = await UserManager.FindByIdAsync(User.Identity.Name);
+            var id = await InterviewService.Create(model, user);
+            return CreatedAtRoute(nameof(GetInterview), new { id }, await InterviewService.Get(id));
         }
     }
 }
